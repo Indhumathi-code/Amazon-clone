@@ -1,0 +1,66 @@
+CREATE DATABASE amazon_clone;
+USE amazon_clone;
+
+-- Users table
+CREATE TABLE users (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(100) NOT NULL,
+  email VARCHAR(150) NOT NULL UNIQUE,
+  mobile VARCHAR(20) NOT NULL UNIQUE,
+  password VARCHAR(255) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Products table
+CREATE TABLE products (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  title VARCHAR(255) NOT NULL,
+  price DECIMAL(10,2) NOT NULL,
+  original_price DECIMAL(10,2),
+  image_url VARCHAR(500),
+  category VARCHAR(100),
+  rating DECIMAL(2,1) DEFAULT 4.0,
+  reviews INT DEFAULT 0,
+  badge VARCHAR(50),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Insert sample products
+INSERT INTO products (title, price, original_price, image_url, category, rating, reviews, badge) VALUES
+('Lunch Box 4 Compartment Stainless Steel', 599, 999, 'https://m.media-amazon.com/images/I/71Ld0-zRjwL._SX679_.jpg', 'Kitchen', 4.3, 1520, 'Best Seller'),
+('Geonix 16GB USB 3.0 Flash Drive', 299, 499, 'https://m.media-amazon.com/images/I/61AcOA0GKJL._SX679_.jpg', 'Electronics', 4.1, 890, NULL),
+('Kids Lunch Box with Bottle', 449, 799, 'https://m.media-amazon.com/images/I/71MQ2CXLV9L._SX679_.jpg', 'Kitchen', 4.5, 2340, 'Prime'),
+('Nuco Lunch Box Set', 399, 699, 'https://m.media-amazon.com/images/I/71jlMs3DGML._SX679_.jpg', 'Kitchen', 4.2, 670, NULL),
+('Samsung 1.5 Ton Split AC', 32990, 45000, 'https://m.media-amazon.com/images/I/61b1kyKwi7L._SX679_.jpg', 'Appliances', 4.4, 5600, 'Deal'),
+('LG 260L Double Door Refrigerator', 24990, 35000, 'https://m.media-amazon.com/images/I/61E56rOSIcL._SX679_.jpg', 'Appliances', 4.3, 3200, 'Deal'),
+('IFB 25L Convection Microwave', 12999, 18000, 'https://m.media-amazon.com/images/I/71hPxROt8pL._SX679_.jpg', 'Appliances', 4.4, 4100, NULL),
+('Samsung 7kg Fully Automatic Washing Machine', 18990, 25000, 'https://m.media-amazon.com/images/I/61AuYQoUZaL._SX679_.jpg', 'Appliances', 4.5, 7800, 'Best Seller');
+
+-- Run this command if you have already created the 'users' table and need to make the 'mobile' column unique:
+-- ALTER TABLE users ADD UNIQUE (mobile);
+
+-- Orders table
+CREATE TABLE orders (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  product_id INT NOT NULL,
+  quantity INT DEFAULT 1,
+  total_price DECIMAL(10,2) NOT NULL,
+  shipping_address VARCHAR(500) NOT NULL,
+  payment_method VARCHAR(100) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id),
+  FOREIGN KEY (product_id) REFERENCES products(id)
+);
+
+-- Cart table
+CREATE TABLE cart (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  product_id INT NOT NULL,
+  quantity INT DEFAULT 1,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id),
+  FOREIGN KEY (product_id) REFERENCES products(id),
+  UNIQUE KEY unique_user_product (user_id, product_id)
+);
